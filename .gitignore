@@ -3,6 +3,7 @@ application-prod.properties
 application.yml
 application-prod.yml
 scripts
+optional
 
 HELP.md
 .gradle
