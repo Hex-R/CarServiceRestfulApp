@@ -37,5 +37,13 @@ public class GlobalExceptionHandler {
                 Map.of("passwordConfirmation", "Пароли не совпадают")), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(PasswordIncorrectException.class)
+    public ResponseEntity<?> customValidationErrorHandling(PasswordIncorrectException exception) {
+
+        return new ResponseEntity<>(new ValidationErrorDetails(HttpStatus.BAD_REQUEST.value(),
+                LocalDateTime.now(), "Validation error",
+                Map.of("password", "Необходимо 6 - 30 символов")), HttpStatus.BAD_REQUEST);
+    }
+
 
 }

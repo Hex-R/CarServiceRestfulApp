@@ -1,8 +1,12 @@
 package com.hex.car_service_restful_app.services;
 
 import com.hex.car_service_restful_app.dto.AuthenticationRequestDto;
+import com.hex.car_service_restful_app.dto.UserDto;
 import com.hex.car_service_restful_app.entities.Role;
 import com.hex.car_service_restful_app.entities.User;
+import com.hex.car_service_restful_app.exceptions.PasswordConfirmationException;
+import com.hex.car_service_restful_app.exceptions.PasswordIncorrectException;
+import com.hex.car_service_restful_app.exceptions.UserExistsException;
 import com.hex.car_service_restful_app.jwt.JwtTokenProvider;
 import com.hex.car_service_restful_app.repositories.UserRepository;
 import org.springframework.context.annotation.Lazy;
@@ -15,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.Collections;
 
@@ -45,11 +50,14 @@ public class UserService implements UserDetailsService {
     }
 
 
-    public boolean addUser(User user) {
-        User userFromDb = userRepository.findByUsername(user.getUsername());
+    public void createUser(User user) {
 
-        if (userFromDb != null) {
-            return false;
+        if (!user.getPassword().equals(user.getPasswordConfirmation())){
+            throw new PasswordConfirmationException();
+        }
+
+        if (userRepository.existsByUsername(user.getUsername())) {
+            throw new UserExistsException();
         }
 
         user.setActive(true);
@@ -60,11 +68,9 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
 
         //sendMessage(user);
-
-        return true;
     }
 
-    public String loginUser(AuthenticationRequestDto requestDto) {
+    public String login(AuthenticationRequestDto requestDto) {
         try {
             String username = requestDto.getUsername();
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, requestDto.getPassword()));
@@ -135,5 +141,30 @@ public class UserService implements UserDetailsService {
         }
 
         return user;
+    }
+
+    public void deleteUser(String id) {
+        userRepository.deleteById(Long.valueOf(id));
+    }
+
+    public void updateCurrentUser(UserDto updatedUser, User currentUser) {
+
+        String newPassword = updatedUser.getPassword();
+
+        if (StringUtils.hasLength(newPassword)) {
+
+            if (StringUtils.hasText(newPassword) && newPassword.length() >= 6 && newPassword.length() <= 30) {
+
+                if (updatedUser.getPassword().equals(updatedUser.getPasswordConfirmation())){
+                    currentUser.setPassword(passwordEncoder.encode(newPassword));
+                }else throw new PasswordConfirmationException();
+
+            }else  throw new PasswordIncorrectException();
+        }
+
+        currentUser.setEmail(updatedUser.getEmail());
+        currentUser.setPhoneNumber(updatedUser.getPhoneNumber());
+
+        userRepository.save(currentUser);
     }
 }
