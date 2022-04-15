@@ -1,11 +1,15 @@
 package com.hex.car_service_restful_app.controllers;
 
-import com.hex.car_service_restful_app.entities.CarService;
+import com.hex.car_service_restful_app.entities.Order;
+import com.hex.car_service_restful_app.entities.User;
+import com.hex.car_service_restful_app.services.OrderService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -13,8 +17,34 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderController {
 
-    @GetMapping
-    public List<CarService> getAllServices() {
+    private final OrderService orderService;
 
+    @PostMapping
+    public ResponseEntity<?> create(@RequestBody @Valid Order order,
+                                    @AuthenticationPrincipal User user) {
+
+        orderService.save(order, user);
+
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @GetMapping
+    public List<Order> getAll(@AuthenticationPrincipal User user) {
+        return orderService.getAll(user);
+    }
+
+    @GetMapping("active")
+    public List<Order> getActive(@AuthenticationPrincipal User user) {
+        return orderService.getActive(user);
+    }
+
+    @GetMapping("completed")
+    public List<Order> getCompleted(@AuthenticationPrincipal User user) {
+        return orderService.getCompleted(user);
+    }
+
+    @DeleteMapping("{id}")
+    public void delete(@PathVariable String id) {
+        orderService.delete(id);
     }
 }

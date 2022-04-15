@@ -43,13 +43,12 @@ public class UserController {
 
     @GetMapping("update")
     public UserDto getCurrentUser(@AuthenticationPrincipal User user) {
-
         return new UserDto(user);
     }
 
     @PutMapping("update")
     public void updateCurrentUser(@RequestBody @Valid UserDto updatedUser,
-                           @AuthenticationPrincipal User currentUser) {
+                                  @AuthenticationPrincipal User currentUser) {
 
         userService.updateCurrentUser(updatedUser, currentUser);
     }
