@@ -16,29 +16,29 @@ import java.util.Set;
 @Entity
 @Data
 @Table(name = "usr")
-public class User extends ParentEntity implements UserDetails {
+public class User extends BaseEntity implements UserDetails {
 
     @JsonView(Views.RegistrationForm.class)
     @NotBlank(message = "Логин не может быть пустым")
     @Size(min = 4, max = 30, message = "Необходимо 4 - 30 символов")
     private String username;
 
-    @JsonView(Views.RegistrationForm.class)
+    @JsonView({Views.RegistrationForm.class, Views.UpdateProfile.class})
     @NotBlank(message = "Пароль не может быть пустым")
     @Size(min = 6, max = 70, message = "Необходимо 6 - 30 символов")
     private String password;
 
-    @JsonView(Views.RegistrationForm.class)
+    @JsonView({Views.RegistrationForm.class, Views.UpdateProfile.class})
     @Transient
     private String passwordConfirmation;
 
-    @JsonView(Views.RegistrationForm.class)
+    @JsonView({Views.RegistrationForm.class, Views.UpdateProfile.class})
     @Email(message = "Введите корректный адрес почты")
     @NotBlank(message = "Email не может быть пустым")
     @Size(max = 50, message = "Максимум 50 символов")
     private String email;
 
-    @JsonView(Views.RegistrationForm.class)
+    @JsonView({Views.RegistrationForm.class, Views.UpdateProfile.class})
     @NotBlank(message = "Номер телефона не может быть пустым")
     @Size(min = 7, max = 12, message = "Необходимо 7 - 12 знаков без пробелов и скобок")
     private String phoneNumber;

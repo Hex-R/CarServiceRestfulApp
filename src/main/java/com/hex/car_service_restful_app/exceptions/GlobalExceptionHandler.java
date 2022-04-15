@@ -28,4 +28,14 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new ValidationErrorDetails(HttpStatus.BAD_REQUEST.value(), LocalDateTime.now(),
                 "Validation error", details), HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(PasswordConfirmationException.class)
+    public ResponseEntity<?> customValidationErrorHandling(PasswordConfirmationException exception) {
+
+        return new ResponseEntity<>(new ValidationErrorDetails(HttpStatus.BAD_REQUEST.value(),
+                LocalDateTime.now(), "Validation error",
+                Map.of("passwordConfirmation", "Пароли не совпадают")), HttpStatus.BAD_REQUEST);
+    }
+
+
 }

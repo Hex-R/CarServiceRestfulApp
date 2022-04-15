@@ -12,7 +12,7 @@ import java.util.List;
 @Entity
 @Data
 @Table(name = "service_order")
-public class Order extends ParentEntity{
+public class Order extends BaseEntity {
 
     private Date placedAt;
 

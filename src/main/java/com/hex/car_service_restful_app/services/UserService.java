@@ -1,9 +1,15 @@
 package com.hex.car_service_restful_app.services;
 
+import com.hex.car_service_restful_app.dto.AuthenticationRequestDto;
 import com.hex.car_service_restful_app.entities.Role;
 import com.hex.car_service_restful_app.entities.User;
+import com.hex.car_service_restful_app.jwt.JwtTokenProvider;
 import com.hex.car_service_restful_app.repositories.UserRepository;
-import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -13,7 +19,6 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 
 @Service
-@RequiredArgsConstructor
 public class UserService implements UserDetailsService {
 
     /*@Value("${hostname}")
@@ -24,6 +29,21 @@ public class UserService implements UserDetailsService {
     //private final MailSenderService mailSenderService;
 
     private final PasswordEncoder passwordEncoder;
+
+    private final AuthenticationManager authenticationManager;
+
+    private final JwtTokenProvider jwtTokenProvider;
+
+    public UserService(UserRepository userRepository,
+                       PasswordEncoder passwordEncoder,
+                       @Lazy AuthenticationManager authenticationManager,
+                       @Lazy JwtTokenProvider jwtTokenProvider) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+        this.jwtTokenProvider = jwtTokenProvider;
+    }
+
 
     public boolean addUser(User user) {
         User userFromDb = userRepository.findByUsername(user.getUsername());
@@ -42,6 +62,21 @@ public class UserService implements UserDetailsService {
         //sendMessage(user);
 
         return true;
+    }
+
+    public String loginUser(AuthenticationRequestDto requestDto) {
+        try {
+            String username = requestDto.getUsername();
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, requestDto.getPassword()));
+            User user = (User) loadUserByUsername(username);
+
+            String token = jwtTokenProvider.createToken(username, user.getRoles());
+
+            return token;
+
+        } catch (AuthenticationException exception) {
+            throw new BadCredentialsException("Invalid username or password");
+        }
     }
 
     /*public boolean updateUser(User user, UserDetailsForm userDetailsForm) {
@@ -96,7 +131,7 @@ public class UserService implements UserDetailsService {
         User user = userRepository.findByUsername(username);
 
         if (user == null) {
-            throw new UsernameNotFoundException("User not found");
+            throw new UsernameNotFoundException("User with username: " + username + " not found");
         }
 
         return user;

@@ -7,7 +7,7 @@ import javax.persistence.*;
 @Entity
 @Data
 @Table(name = "car_service")
-public class CarService extends ParentEntity{
+public class CarService extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private ServiceType type;
