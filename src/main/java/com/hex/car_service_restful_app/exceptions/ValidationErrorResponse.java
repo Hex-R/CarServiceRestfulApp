@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 @Data
-public class ValidationErrorDetails {
+public class ValidationErrorResponse {
 
     private int httpStatus;
 
@@ -18,7 +18,7 @@ public class ValidationErrorDetails {
 
     private Map<String, String> details;
 
-    public ValidationErrorDetails(int httpStatus, LocalDateTime timestamp, String message, Map<String, String> details) {
+    public ValidationErrorResponse(int httpStatus, LocalDateTime timestamp, String message, Map<String, String> details) {
         super();
         this.httpStatus = httpStatus;
         this.timestamp = timestamp;

@@ -1,7 +1,6 @@
 package com.hex.car_service_restful_app.jwt;
 
 import com.hex.car_service_restful_app.entities.Role;
-import com.hex.car_service_restful_app.exceptions.JwtAuthenticationException;
 import com.hex.car_service_restful_app.services.UserService;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
@@ -82,9 +81,26 @@ public class JwtTokenProvider {
             return true;
 
         } catch (JwtException | IllegalArgumentException exception) {
+            System.err.println(exception.getMessage());
+        }
+
+        return false;
+    }
+
+    /*public boolean validateToken(String token) {
+        try {
+            Jws<Claims> claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
+
+            if (claims.getBody().getExpiration().before(new Date())) {
+                return false;
+            }
+
+            return true;
+
+        } catch (JwtException | IllegalArgumentException exception) {
             throw new JwtAuthenticationException("JWT token is expired or invalid");
         }
-    }
+    }*/
 
     /*private List<String> getRoleNames(List<Role> userRoles) {
         List<String> result = new ArrayList<>();

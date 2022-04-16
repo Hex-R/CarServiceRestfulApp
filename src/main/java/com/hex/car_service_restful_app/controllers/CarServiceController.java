@@ -3,6 +3,9 @@ package com.hex.car_service_restful_app.controllers;
 import com.hex.car_service_restful_app.entities.CarService;
 import com.hex.car_service_restful_app.services.CarServiceService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -25,7 +28,27 @@ public class CarServiceController {
         return carServiceService.getByType(type);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping
-    public void create(@RequestBody @Valid )
+    public ResponseEntity<?> add(@RequestBody @Valid CarService carService) {
 
+        carServiceService.add(carService);
+
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    //@PathVariable("id") Message messageFromDB Получать сразу объект из базы по id
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PutMapping("{id}")
+    public void edit(@PathVariable String id,
+                     @RequestBody @Valid CarService carService) {
+
+        carServiceService.edit(id, carService);
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @DeleteMapping("{id}")
+    public void delete(@PathVariable String id) {
+        carServiceService.delete(id);
+    }
 }

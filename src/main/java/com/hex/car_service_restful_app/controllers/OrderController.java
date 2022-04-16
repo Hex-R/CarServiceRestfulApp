@@ -43,6 +43,14 @@ public class OrderController {
         return orderService.getCompleted(user);
     }
 
+    @PutMapping("{id}")
+    public void edit(@PathVariable String id,
+                     @RequestBody @Valid Order order) {
+
+        orderService.edit(id, order);
+    }
+
+
     @DeleteMapping("{id}")
     public void delete(@PathVariable String id) {
         orderService.delete(id);
