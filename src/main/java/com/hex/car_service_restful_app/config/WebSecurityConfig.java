@@ -25,6 +25,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
+
+        if (swaggerEnabled){
+            httpSecurity
+                    .authorizeRequests()
+                    .antMatchers("/api/api-docs/**", "/api/swagger-ui.html", "/api/swagger-ui/**")
+                    .permitAll();
+        }
+
         httpSecurity
                 .httpBasic().disable()
                 .csrf().disable()
@@ -35,13 +43,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
                 .apply(new JwtConfigurer(jwtTokenProvider));
-
-        if (swaggerEnabled){
-            httpSecurity
-                    .authorizeRequests()
-                    .antMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**")
-                    .permitAll();
-        }
     }
 
     @Bean
