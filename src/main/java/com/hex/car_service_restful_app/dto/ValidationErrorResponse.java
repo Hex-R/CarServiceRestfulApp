@@ -1,4 +1,4 @@
-package com.hex.car_service_restful_app.exceptions;
+package com.hex.car_service_restful_app.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;

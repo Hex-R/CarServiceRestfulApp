@@ -86,29 +86,4 @@ public class JwtTokenProvider {
 
         return false;
     }
-
-    /*public boolean validateToken(String token) {
-        try {
-            Jws<Claims> claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
-
-            if (claims.getBody().getExpiration().before(new Date())) {
-                return false;
-            }
-
-            return true;
-
-        } catch (JwtException | IllegalArgumentException exception) {
-            throw new JwtAuthenticationException("JWT token is expired or invalid");
-        }
-    }*/
-
-    /*private List<String> getRoleNames(List<Role> userRoles) {
-        List<String> result = new ArrayList<>();
-
-        userRoles.forEach(role -> {
-            result.add(role.getName());
-        });
-
-        return result;
-    }*/
 }

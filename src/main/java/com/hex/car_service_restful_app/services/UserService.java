@@ -26,12 +26,7 @@ import java.util.Collections;
 @Service
 public class UserService implements UserDetailsService {
 
-    /*@Value("${hostname}")
-    private String hostname;*/
-
     private final UserRepository userRepository;
-
-    //private final MailSenderService mailSenderService;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -62,12 +57,9 @@ public class UserService implements UserDetailsService {
 
         user.setActive(true);
         user.setRoles(Collections.singleton(Role.USER));
-        //user.setActivationCode(UUID.randomUUID().toString());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         userRepository.save(user);
-
-        //sendMessage(user);
     }
 
     public String login(AuthenticationRequestDto requestDto) {
@@ -83,68 +75,6 @@ public class UserService implements UserDetailsService {
         } catch (AuthenticationException exception) {
             throw new BadCredentialsException("Invalid username or password");
         }
-    }
-
-    /*public boolean updateUser(User user, UserDetailsForm userDetailsForm) {
-
-        String newPassword = userDetailsForm.getPassword();
-
-        if (StringUtils.hasLength(newPassword)) {
-
-            if (StringUtils.hasText(newPassword) && newPassword.length() >= 6 && newPassword.length() <= 30) {
-                user.setPassword(passwordEncoder.encode(userDetailsForm.getPassword()));
-            } else return false;
-        }
-
-        user.setEmail(userDetailsForm.getEmail());
-        user.setPhoneNumber(userDetailsForm.getPhoneNumber());
-
-        userRepository.save(user);
-        return true;
-    }*/
-
-    /*private void sendMessage(User user) {
-        if (!user.getEmail().isBlank()) {
-            String message = String.format(
-                    "Здравствуйте, %s! \n" +
-                            "Для подтверждения вашего email перейдите по ссылке http://%s/register/activation/%s",
-                    user.getUsername(),
-                    hostname,
-                    user.getActivationCode()
-            );
-
-            mailSenderService.send(user.getEmail(), "Код активации", message);
-        }
-    }*/
-
-    /*public boolean activateUser(String code) {
-
-        User user = userRepository.findByActivationCode(code);
-
-        if (user == null) {
-            return false;
-        }
-
-        user.setActive(true);
-        user.setActivationCode(null);
-        userRepository.save(user);
-
-        return true;
-    }*/
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username);
-
-        if (user == null) {
-            throw new UsernameNotFoundException("User with username: " + username + " not found");
-        }
-
-        return user;
-    }
-
-    public void deleteUser(String id) {
-        userRepository.deleteById(Long.valueOf(id));
     }
 
     public void updateCurrentUser(UserDto updatedUser, User currentUser) {
@@ -166,5 +96,20 @@ public class UserService implements UserDetailsService {
         currentUser.setPhoneNumber(updatedUser.getPhoneNumber());
 
         userRepository.save(currentUser);
+    }
+
+    public void deleteUser(String id) {
+        userRepository.deleteById(Long.valueOf(id));
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByUsername(username);
+
+        if (user == null) {
+            throw new UsernameNotFoundException("User with username: " + username + " not found");
+        }
+
+        return user;
     }
 }

@@ -2,6 +2,7 @@ package com.hex.car_service_restful_app.config;
 
 import com.hex.car_service_restful_app.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,6 +20,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JwtTokenProvider jwtTokenProvider;
 
+    @Value("${prop.swagger.enabled}")
+    private boolean swaggerEnabled;
+
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
@@ -27,11 +31,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/api/v1/users/registration", "/api/v1/users/login",
-                        "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
+                .antMatchers("/api/v1/users/registration", "/api/v1/users/login").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .apply(new JwtConfigurer(jwtTokenProvider));
+
+        if (swaggerEnabled){
+            httpSecurity
+                    .authorizeRequests()
+                    .antMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**")
+                    .permitAll();
+        }
     }
 
     @Bean

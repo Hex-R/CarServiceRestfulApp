@@ -1,5 +1,6 @@
 package com.hex.car_service_restful_app.exceptions;
 
+import com.hex.car_service_restful_app.dto.ValidationErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -77,13 +78,4 @@ public class GlobalExceptionHandler {
         return new ValidationErrorResponse(HttpStatus.BAD_REQUEST.value(),
                 LocalDateTime.now(), exception.getMessage(), null);
     }
-
-    /*@ExceptionHandler(JwtAuthenticationException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ResponseBody
-    public ValidationErrorResponse onJwtAuthenticationException(JwtAuthenticationException exception) {
-
-        return new ValidationErrorResponse(HttpStatus.BAD_REQUEST.value(),
-                LocalDateTime.now(), exception.getMessage(), null);
-    }*/
 }
