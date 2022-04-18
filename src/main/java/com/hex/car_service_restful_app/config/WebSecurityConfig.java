@@ -1,5 +1,6 @@
 package com.hex.car_service_restful_app.config;
 
+import com.hex.car_service_restful_app.jwt.AuthEntryPointJwt;
 import com.hex.car_service_restful_app.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +21,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JwtTokenProvider jwtTokenProvider;
 
+    private final AuthEntryPointJwt unauthorizedHandler;
+
     @Value("${prop.swagger.enabled}")
     private boolean swaggerEnabled;
 
@@ -36,6 +39,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity
                 .httpBasic().disable()
                 .csrf().disable()
+                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
+                .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()

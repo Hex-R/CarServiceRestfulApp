@@ -1,7 +1,8 @@
 package com.hex.car_service_restful_app.services;
 
 import com.hex.car_service_restful_app.dto.AuthenticationRequestDto;
-import com.hex.car_service_restful_app.dto.UserDto;
+import com.hex.car_service_restful_app.dto.UserRegistrationDto;
+import com.hex.car_service_restful_app.dto.UserUpdateDto;
 import com.hex.car_service_restful_app.entities.Role;
 import com.hex.car_service_restful_app.entities.User;
 import com.hex.car_service_restful_app.exceptions.PasswordConfirmationException;
@@ -45,19 +46,25 @@ public class UserService implements UserDetailsService {
     }
 
 
-    public void createUser(User user) {
+    public void createUser(UserRegistrationDto userDto) {
 
-        if (!user.getPassword().equals(user.getPasswordConfirmation())){
+        if (!userDto.getPassword().equals(userDto.getPasswordConfirmation())){
             throw new PasswordConfirmationException();
         }
 
-        if (userRepository.existsByUsername(user.getUsername())) {
+        if (userRepository.existsByUsername(userDto.getUsername())) {
             throw new UserExistsException();
         }
 
+        User user = new User();
+
+        user.setUsername(userDto.getUsername());
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        user.setEmail(userDto.getEmail());
+        user.setPhoneNumber(userDto.getPhoneNumber());
+
         user.setActive(true);
         user.setRoles(Collections.singleton(Role.USER));
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         userRepository.save(user);
     }
@@ -77,7 +84,7 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public void updateCurrentUser(UserDto updatedUser, User currentUser) {
+    public void updateCurrentUser(UserUpdateDto updatedUser, User currentUser) {
 
         String newPassword = updatedUser.getPassword();
 

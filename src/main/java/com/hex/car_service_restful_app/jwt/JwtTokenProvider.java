@@ -82,6 +82,7 @@ public class JwtTokenProvider {
 
         } catch (JwtException | IllegalArgumentException exception) {
             System.err.println(exception.getMessage());
+            //throw new JwtAuthenticationException("JWT token is expired or invalid");
         }
 
         return false;

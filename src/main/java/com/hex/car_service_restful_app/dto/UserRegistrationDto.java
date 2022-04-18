@@ -1,6 +1,5 @@
 package com.hex.car_service_restful_app.dto;
 
-import com.hex.car_service_restful_app.entities.User;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,10 +9,14 @@ import javax.validation.constraints.Size;
 
 @Data
 @NoArgsConstructor
-public class UserDto {
+public class UserRegistrationDto {
 
+    @NotBlank(message = "Логин не может быть пустым")
+    @Size(min = 4, max = 30, message = "Необходимо 4 - 30 символов")
     private String username;
 
+    @NotBlank(message = "Пароль не может быть пустым")
+    @Size(min = 6, max = 70, message = "Необходимо 6 - 30 символов")
     private String password;
 
     private String passwordConfirmation;
@@ -26,9 +29,4 @@ public class UserDto {
     @NotBlank(message = "Номер телефона не может быть пустым")
     @Size(min = 7, max = 12, message = "Необходимо 7 - 12 знаков без пробелов и скобок")
     private String phoneNumber;
-
-    public UserDto(User user) {
-        this.setEmail(user.getEmail());
-        this.setPhoneNumber(user.getPhoneNumber());
-    }
 }
