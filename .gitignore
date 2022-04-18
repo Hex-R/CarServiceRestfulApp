@@ -4,6 +4,7 @@ application.yml
 application-prod.yml
 scripts
 optional
+V5__Service.sql
 
 HELP.md
 .gradle

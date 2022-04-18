@@ -5,6 +5,5 @@ values (1, true, 'test', 'test', 'test@mail.com', '89181231234', null),
 
 insert into user_role (user_id, roles)
 values (1, 'USER'),
-       (1, 'ADMIN'),
        (2, 'USER'),
        (3, 'USER');
