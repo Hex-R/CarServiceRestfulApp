@@ -1,13 +1,14 @@
 package com.hex.car_service_restful_app.services;
 
+import com.hex.car_service_restful_app.dto.OrderDto;
 import com.hex.car_service_restful_app.entities.Order;
 import com.hex.car_service_restful_app.entities.User;
 import com.hex.car_service_restful_app.exceptions.NotFoundException;
 import com.hex.car_service_restful_app.repositories.OrderRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -16,40 +17,58 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
 
-    public void save(Order order, User user) {
+    public void save(OrderDto orderDto, User user) {
 
+        Order order = new Order();
+
+        order.setExecutionDate(orderDto.getExecutionDate());
+        order.setServices(orderDto.getServices());
         order.setUser(user);
         order.setCompleted(false);
 
         orderRepository.save(order);
     }
 
-    public List<Order> getAll(User user) {
+    public List<OrderDto> getAll(User user) {
 
-        return orderRepository.findAll();
+        List<OrderDto> orderDtos = new ArrayList<>();
+        orderRepository.findByUserId(user.getId()).stream().map(order -> orderDtos.add(new OrderDto(order)));
+        return orderDtos;
     }
 
-    public List<Order> getActive(User user) {
+    public List<OrderDto> getActive(User user) {
 
-        return orderRepository.findByUserIdAndIsCompleted(user.getId(), false);
+        List<OrderDto> orderDtos = new ArrayList<>();
+
+        orderRepository.findByUserIdAndIsCompleted(user.getId(), false)
+                .stream().map(order -> orderDtos.add(new OrderDto(order)));
+
+        return orderDtos;
     }
 
-    public List<Order> getCompleted(User user) {
+    public List<OrderDto> getCompleted(User user) {
 
-        return orderRepository.findByUserIdAndIsCompleted(user.getId(), true);
+        List<OrderDto> orderDtos = new ArrayList<>();
+
+        orderRepository.findByUserIdAndIsCompleted(user.getId(), true)
+                .stream().map(order -> orderDtos.add(new OrderDto(order)));
+
+        return orderDtos;
     }
 
-    public void edit(String id, Order updatedOrder) {
+    public void edit(String orderId, OrderDto updatedOrder, User user) {
 
-        Order orderFromDb = orderRepository.findById(Long.valueOf(id))
-                .orElseThrow(() -> new NotFoundException(String.format("Order with id: %s not found", id)));
+        Order orderToUpdate = orderRepository.findByIdAndUserId(Long.valueOf(orderId), user.getId())
+                .orElseThrow(() -> new NotFoundException(
+                        String.format("Order with id %s not found, or not belong to this user", orderId)));
 
-        BeanUtils.copyProperties(updatedOrder, orderFromDb);
-        orderRepository.save(orderFromDb);
+        orderToUpdate.setExecutionDate(updatedOrder.getExecutionDate());
+        orderToUpdate.setServices(updatedOrder.getServices());
+
+        orderRepository.save(orderToUpdate);
     }
 
-    public void delete(String id) {
-
-        orderRepository.deleteById(Long.valueOf(id));
+    public void delete(String orderId, User user) {
+        orderRepository.deleteByIdAndUserId(Long.valueOf(orderId), user.getId());
     }
 }

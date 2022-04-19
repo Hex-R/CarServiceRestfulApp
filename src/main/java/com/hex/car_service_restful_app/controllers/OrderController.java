@@ -1,10 +1,8 @@
 package com.hex.car_service_restful_app.controllers;
 
-import com.hex.car_service_restful_app.dto.ApiResponseDto;
-import com.hex.car_service_restful_app.entities.Order;
+import com.hex.car_service_restful_app.dto.OrderDto;
 import com.hex.car_service_restful_app.entities.User;
 import com.hex.car_service_restful_app.services.OrderService;
-import com.hex.car_service_restful_app.services.TokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +11,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Tag(name = "Order controller",
         description = "Create, get, update or delete current user's orders")
@@ -23,51 +22,47 @@ public class OrderController {
 
     private final OrderService orderService;
 
-    private final TokenService tokenService;
-
     @Operation(summary = "Create new order")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public ApiResponseDto create(@RequestBody @Valid Order order,
-                                 @AuthenticationPrincipal User user) {
+    public void create(@RequestBody @Valid OrderDto orderDto,
+                       @AuthenticationPrincipal User user) {
 
-        orderService.save(order, user);
-        return new ApiResponseDto(tokenService.createNewToken(user));
+        orderService.save(orderDto, user);
     }
 
     @Operation(summary = "Returns all orders of current user")
     @GetMapping
-    public ApiResponseDto getAll(@AuthenticationPrincipal User user) {
-        return new ApiResponseDto(tokenService.createNewToken(user), orderService.getAll(user));
+    public List<OrderDto> getAll(@AuthenticationPrincipal User user) {
+        return orderService.getAll(user);
     }
 
     @Operation(summary = "Returns only active orders of current user")
     @GetMapping("active")
-    public ApiResponseDto getActive(@AuthenticationPrincipal User user) {
-        return new ApiResponseDto(tokenService.createNewToken(user), orderService.getActive(user));
+    public List<OrderDto> getActive(@AuthenticationPrincipal User user) {
+        return orderService.getActive(user);
     }
 
     @Operation(summary = "Returns only completed orders of current user")
     @GetMapping("completed")
-    public ApiResponseDto getCompleted(@AuthenticationPrincipal User user) {
-        return new ApiResponseDto(tokenService.createNewToken(user), orderService.getCompleted(user));
+    public List<OrderDto> getCompleted(@AuthenticationPrincipal User user) {
+        return orderService.getCompleted(user);
     }
 
     @Operation(summary = "Update order")
     @PutMapping("{id}")
-    public ApiResponseDto edit(@PathVariable String id,
-                               @RequestBody @Valid Order order,
-                               @AuthenticationPrincipal User user) {
+    public void edit(@PathVariable String orderId,
+                     @RequestBody @Valid OrderDto updatedOrder,
+                     @AuthenticationPrincipal User user) {
 
-        orderService.edit(id, order);
-        return new ApiResponseDto(tokenService.createNewToken(user));
+        orderService.edit(orderId, updatedOrder, user);
     }
 
     @Operation(summary = "Delete order")
     @DeleteMapping("{id}")
-    public ApiResponseDto delete(@PathVariable String id,
-                                 @AuthenticationPrincipal User user) {
-        orderService.delete(id);
-        return new ApiResponseDto(tokenService.createNewToken(user));
+    public void delete(@PathVariable String orderId,
+                       @AuthenticationPrincipal User user) {
+
+        orderService.delete(orderId, user);
     }
 }

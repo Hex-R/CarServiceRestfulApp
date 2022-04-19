@@ -1,11 +1,9 @@
 package com.hex.car_service_restful_app.controllers;
 
-import com.hex.car_service_restful_app.dto.ApiResponseDto;
 import com.hex.car_service_restful_app.dto.AuthenticationRequestDto;
 import com.hex.car_service_restful_app.dto.UserRegistrationDto;
 import com.hex.car_service_restful_app.dto.UserUpdateDto;
 import com.hex.car_service_restful_app.entities.User;
-import com.hex.car_service_restful_app.services.TokenService;
 import com.hex.car_service_restful_app.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,8 +24,6 @@ public class UserController {
 
     private final UserService userService;
 
-    private final TokenService tokenService;
-
     @Operation(summary = "Register new user")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("registration")
@@ -37,33 +33,29 @@ public class UserController {
 
     @Operation(summary = "Login with username and password. Returns username and JWT token")
     @PostMapping("login")
-    public ApiResponseDto login(@RequestBody AuthenticationRequestDto requestDto) {
-        return new ApiResponseDto(userService.login(requestDto));
+    public String login(@RequestBody AuthenticationRequestDto requestDto) {
+        return userService.login(requestDto);
     }
 
     @Operation(summary = "Returns current user data with empty password." +
             " Can be used for update user's profile")
     @GetMapping("update")
-    public ApiResponseDto getCurrentUser(@AuthenticationPrincipal User user) {
-        return new ApiResponseDto(tokenService.createNewToken(user), new UserUpdateDto(user));
+    public UserUpdateDto getCurrentUser(@AuthenticationPrincipal User user) {
+        return new UserUpdateDto(user);
     }
 
     @Operation(summary = "Update current user's data")
     @PutMapping("update")
-    public ApiResponseDto updateCurrentUser(@RequestBody @Valid UserUpdateDto updatedUser,
-                                            @AuthenticationPrincipal User currentUser) {
+    public void updateCurrentUser(@RequestBody @Valid UserUpdateDto updatedUser,
+                                  @AuthenticationPrincipal User currentUser) {
 
         userService.updateCurrentUser(updatedUser, currentUser);
-        return new ApiResponseDto(tokenService.createNewToken(currentUser));
     }
 
     @Operation(summary = "Delete user. Requires 'ADMIN' authority")
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("{id}")
-    public ApiResponseDto deleteUser(@PathVariable String id,
-                                     @AuthenticationPrincipal User user) {
-
+    public void deleteUser(@PathVariable String id) {
         userService.deleteUser(id);
-        return new ApiResponseDto(tokenService.createNewToken(user));
     }
 }

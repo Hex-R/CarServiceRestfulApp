@@ -4,6 +4,7 @@ create table car_service
 (
     id          int8          not null,
     type        varchar(255)  not null,
+    category    varchar(255)  not null,
     name        varchar(255)  not null,
     description varchar(2048) not null,
     price       int4          not null,
