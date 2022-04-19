@@ -46,6 +46,9 @@ public class CarServiceService {
     }
 
     public void delete(String id) {
+        if (!carServiceRepository.existsById(Long.valueOf(id))){
+            throw new NotFoundException(String.format("Car service with id %s not found", id));
+        }
         carServiceRepository.deleteById(Long.valueOf(id));
     }
 }

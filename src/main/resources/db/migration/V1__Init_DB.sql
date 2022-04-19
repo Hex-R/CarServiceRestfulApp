@@ -1,4 +1,4 @@
-create sequence hibernate_sequence start 4 increment 1;
+create sequence hibernate_sequence start 36 increment 1;
 
 create table car_service
 (

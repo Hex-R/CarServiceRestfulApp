@@ -5,16 +5,12 @@ import com.hex.car_service_restful_app.dto.UserRegistrationDto;
 import com.hex.car_service_restful_app.dto.UserUpdateDto;
 import com.hex.car_service_restful_app.entities.Role;
 import com.hex.car_service_restful_app.entities.User;
-import com.hex.car_service_restful_app.exceptions.PasswordConfirmationException;
-import com.hex.car_service_restful_app.exceptions.PasswordIncorrectException;
-import com.hex.car_service_restful_app.exceptions.UserExistsException;
+import com.hex.car_service_restful_app.exceptions.*;
 import com.hex.car_service_restful_app.jwt.JwtTokenProvider;
 import com.hex.car_service_restful_app.repositories.UserRepository;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -48,12 +44,20 @@ public class UserService implements UserDetailsService {
 
     public void createUser(UserRegistrationDto userDto) {
 
-        if (!userDto.getPassword().equals(userDto.getPasswordConfirmation())){
-            throw new PasswordConfirmationException();
-        }
-
         if (userRepository.existsByUsername(userDto.getUsername())) {
             throw new UserExistsException();
+        }
+
+        if (userRepository.existsByEmail(userDto.getEmail())) {
+            throw new EmailAlreadyInUseException();
+        }
+
+        if (userRepository.existsByPhoneNumber(userDto.getPhoneNumber())) {
+            throw new PhoneNumberAlreadyInUseException();
+        }
+
+        if (!userDto.getPassword().equals(userDto.getPasswordConfirmation())){
+            throw new PasswordConfirmationException();
         }
 
         User user = new User();
@@ -70,18 +74,12 @@ public class UserService implements UserDetailsService {
     }
 
     public String login(AuthenticationRequestDto requestDto) {
-        try {
-            String username = requestDto.getUsername();
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, requestDto.getPassword()));
-            User user = (User) loadUserByUsername(username);
 
-            String token = jwtTokenProvider.createToken(username, user.getRoles());
+        String username = requestDto.getUsername();
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, requestDto.getPassword()));
+        User user = (User) loadUserByUsername(username);
 
-            return token;
-
-        } catch (AuthenticationException exception) {
-            throw new BadCredentialsException("Invalid username or password");
-        }
+        return jwtTokenProvider.createToken(username, user.getRoles());
     }
 
     public void updateCurrentUser(UserUpdateDto updatedUser, User currentUser) {
@@ -106,17 +104,15 @@ public class UserService implements UserDetailsService {
     }
 
     public void deleteUser(String id) {
+        if (!userRepository.existsById(Long.valueOf(id))){
+            throw new NotFoundException(String.format("User with id %s not found", id));
+        }
         userRepository.deleteById(Long.valueOf(id));
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username);
-
-        if (user == null) {
-            throw new UsernameNotFoundException("User with username: " + username + " not found");
-        }
-
-        return user;
+        return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(
+                        String.format("User with username: %s not found", username)));
     }
 }

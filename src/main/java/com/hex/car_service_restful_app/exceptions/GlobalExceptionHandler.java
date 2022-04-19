@@ -50,6 +50,36 @@ public class GlobalExceptionHandler {
                 "Validation error", details);
     }
 
+    @ExceptionHandler(UserExistsException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ValidationErrorResponse onUserExistsException(UserExistsException exception) {
+
+        return new ValidationErrorResponse(HttpStatus.BAD_REQUEST.value(),
+                LocalDateTime.now(), "Validation error",
+                Map.of("username", "Пользователь с таким именем уже существует"));
+    }
+
+    @ExceptionHandler(EmailAlreadyInUseException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ValidationErrorResponse onEmailAlreadyInUseException(EmailAlreadyInUseException exception) {
+
+        return new ValidationErrorResponse(HttpStatus.BAD_REQUEST.value(),
+                LocalDateTime.now(), "Validation error",
+                Map.of("email", "Этот адрес почты уже используется другим пользователем"));
+    }
+
+    @ExceptionHandler(PhoneNumberAlreadyInUseException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ValidationErrorResponse onPhoneNumberAlreadyInUseException(PhoneNumberAlreadyInUseException exception) {
+
+        return new ValidationErrorResponse(HttpStatus.BAD_REQUEST.value(),
+                LocalDateTime.now(), "Validation error",
+                Map.of("phoneNumber", "Этот номер телефона уже используется другим пользователем"));
+    }
+
     @ExceptionHandler(PasswordConfirmationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody

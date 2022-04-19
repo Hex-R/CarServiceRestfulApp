@@ -18,7 +18,7 @@ public class CarService extends BaseEntity {
     @NotNull(message = "Укажите тип сервиса")
     private ServiceType type;
 
-    @NotBlank(message = "Укажите тип сервиса")
+    @NotBlank(message = "Укажите категорию сервиса")
     private String category;
 
     @NotBlank(message = "Укажите название сервиса")

@@ -12,8 +12,6 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 public class UserUpdateDto {
 
-    private String username;
-
     private String password;
 
     private String passwordConfirmation;
