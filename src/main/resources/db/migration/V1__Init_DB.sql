@@ -21,7 +21,7 @@ create table service_order
 );
 create table service_order_services
 (
-    service_order_id int8 not null,
+    order_id         int8 not null,
     services_id      int8 not null
 );
 create table user_role
@@ -52,7 +52,7 @@ alter table if exists service_order
 alter table if exists service_order_services
     add constraint FKmbixkrxgp4ppu59xwkxbm442 foreign key (services_id) references car_service;
 alter table if exists service_order_services
-    add constraint FKev9bddfmbwoaexnq9m00ei08w foreign key (service_order_id) references service_order;
+    add constraint FKev9bddfmbwoaexnq9m00ei08w foreign key (order_id) references service_order;
 alter table if exists user_role
     add constraint FKfpm8swft53ulq2hl11yplpr5 foreign key (user_id) references usr;
 alter table if exists usr_service_orders

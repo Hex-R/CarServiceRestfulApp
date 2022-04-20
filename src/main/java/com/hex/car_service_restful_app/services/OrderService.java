@@ -31,27 +31,36 @@ public class OrderService {
 
     public List<OrderDto> getAll(User user) {
 
+        List<Order> orders = orderRepository.findByUserId(user.getId());
         List<OrderDto> orderDtos = new ArrayList<>();
-        orderRepository.findByUserId(user.getId()).stream().map(order -> orderDtos.add(new OrderDto(order)));
+
+        for (Order order : orders) {
+            orderDtos.add(new OrderDto(order));
+        }
+
         return orderDtos;
     }
 
     public List<OrderDto> getActive(User user) {
 
+        List<Order> orders = orderRepository.findByUserIdAndIsCompleted(user.getId(), false);
         List<OrderDto> orderDtos = new ArrayList<>();
 
-        orderRepository.findByUserIdAndIsCompleted(user.getId(), false)
-                .stream().map(order -> orderDtos.add(new OrderDto(order)));
+        for (Order order : orders) {
+            orderDtos.add(new OrderDto(order));
+        }
 
         return orderDtos;
     }
 
     public List<OrderDto> getCompleted(User user) {
 
+        List<Order> orders = orderRepository.findByUserIdAndIsCompleted(user.getId(), true);
         List<OrderDto> orderDtos = new ArrayList<>();
 
-        orderRepository.findByUserIdAndIsCompleted(user.getId(), true)
-                .stream().map(order -> orderDtos.add(new OrderDto(order)));
+        for (Order order : orders) {
+            orderDtos.add(new OrderDto(order));
+        }
 
         return orderDtos;
     }
