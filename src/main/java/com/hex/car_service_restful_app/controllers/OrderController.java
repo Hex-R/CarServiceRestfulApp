@@ -14,7 +14,9 @@ import javax.validation.Valid;
 import java.util.List;
 
 @Tag(name = "Order controller",
-        description = "Create, get, update or delete current user's orders")
+        description = "Operations with orders of current user. " +
+                "executionDate format: dd-MM-yyyy HH:mm " +
+                "In services list you can send service's id instead of all object's fields.")
 @RestController
 @RequestMapping("/api/v1/orders/")
 @RequiredArgsConstructor
@@ -22,7 +24,7 @@ public class OrderController {
 
     private final OrderService orderService;
 
-    @Operation(summary = "Create new order")
+    @Operation(summary = "Create new order for current user")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public void create(@RequestBody @Valid OrderDto orderDto,
@@ -49,18 +51,18 @@ public class OrderController {
         return orderService.getCompleted(user);
     }
 
-    @Operation(summary = "Update order")
+    @Operation(summary = "Update order of current user")
     @PutMapping("{id}")
-    public void edit(@PathVariable String orderId,
+    public void edit(@PathVariable("id") String orderId,
                      @RequestBody @Valid OrderDto updatedOrder,
                      @AuthenticationPrincipal User user) {
 
         orderService.edit(orderId, updatedOrder, user);
     }
 
-    @Operation(summary = "Delete order")
+    @Operation(summary = "Delete order of current user")
     @DeleteMapping("{id}")
-    public void delete(@PathVariable String orderId,
+    public void delete(@PathVariable("id") String orderId,
                        @AuthenticationPrincipal User user) {
 
         orderService.delete(orderId, user);

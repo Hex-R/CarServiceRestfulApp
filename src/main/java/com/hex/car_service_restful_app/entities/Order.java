@@ -1,12 +1,12 @@
 package com.hex.car_service_restful_app.entities;
 
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Entity
@@ -14,11 +14,10 @@ import java.util.List;
 @Table(name = "orders")
 public class Order extends BaseEntity {
 
-    private Date placedAt;
+    private LocalDateTime placedAt;
 
     @NotNull(message = "Выберите дату и время для записи")
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
-    private Date executionDate;
+    private LocalDateTime executionDate;
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
@@ -37,6 +36,6 @@ public class Order extends BaseEntity {
 
     @PrePersist
     void placedAt() {
-        this.placedAt = new Date();
+        this.placedAt = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
     }
 }

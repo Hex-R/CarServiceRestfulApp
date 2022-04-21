@@ -31,7 +31,7 @@ public class UserController {
         userService.createUser(userDto);
     }
 
-    @Operation(summary = "Login with username and password. Returns username and JWT token")
+    @Operation(summary = "Login with username and password. Returns JWT token")
     @PostMapping("login")
     public String login(@RequestBody AuthenticationRequestDto requestDto) {
         return userService.login(requestDto);
@@ -44,7 +44,7 @@ public class UserController {
         return new UserUpdateDto(user);
     }
 
-    @Operation(summary = "Update current user's data")
+    @Operation(summary = "Update data of current user")
     @PutMapping("update")
     public void updateCurrentUser(@RequestBody @Valid UserUpdateDto updatedUser,
                                   @AuthenticationPrincipal User currentUser) {

@@ -16,7 +16,7 @@ public class UserRegistrationDto {
     private String username;
 
     @NotBlank(message = "Пароль не может быть пустым")
-    @Size(min = 6, max = 70, message = "Необходимо 6 - 30 символов")
+    @Size(min = 6, max = 30, message = "Необходимо 6 - 30 символов")
     private String password;
 
     private String passwordConfirmation;

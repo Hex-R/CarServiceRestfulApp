@@ -2,10 +2,12 @@ package com.hex.car_service_restful_app.repositories;
 
 import com.hex.car_service_restful_app.entities.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
+@Transactional
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
     List<Order> findByUserId(Long userId);

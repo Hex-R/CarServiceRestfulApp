@@ -25,9 +25,6 @@ public class User extends BaseEntity implements UserDetails {
     @Size(min = 6, max = 70, message = "Необходимо 6 - 30 символов")
     private String password;
 
-    @Transient
-    private String passwordConfirmation;
-
     @Email(message = "Введите корректный адрес почты")
     @NotBlank(message = "Email не может быть пустым")
     @Size(max = 50, message = "Максимум 50 символов")
