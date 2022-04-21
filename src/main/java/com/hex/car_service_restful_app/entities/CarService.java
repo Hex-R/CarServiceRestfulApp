@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Data
-@Table(name = "car_service")
+@Table(name = "services")
 public class CarService extends BaseEntity {
 
     @Enumerated(EnumType.STRING)

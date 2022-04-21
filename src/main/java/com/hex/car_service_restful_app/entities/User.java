@@ -14,7 +14,7 @@ import java.util.Set;
 
 @Entity
 @Data
-@Table(name = "usr")
+@Table(name = "users")
 public class User extends BaseEntity implements UserDetails {
 
     @NotBlank(message = "Логин не может быть пустым")
@@ -37,7 +37,7 @@ public class User extends BaseEntity implements UserDetails {
     @Size(min = 7, max = 12, message = "Необходимо 7 - 12 знаков без пробелов и скобок")
     private String phoneNumber;
 
-    @OneToMany
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Order> serviceOrders;
 
     private String activationCode;
@@ -45,7 +45,7 @@ public class User extends BaseEntity implements UserDetails {
     private Boolean active;
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
 

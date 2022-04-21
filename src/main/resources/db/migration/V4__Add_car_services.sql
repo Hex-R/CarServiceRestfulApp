@@ -1,4 +1,4 @@
-insert into car_service (id, type, category, name, description, price)
+insert into services (id, type, category, name, description, price)
 values (1, 'MAINTENANCE', 'Техническое обслуживание', 'ТО Автомобиля', 'Описание', 700),
        (2, 'MAINTENANCE', 'Техническое обслуживание', 'Замена масел в агрегатах', 'Описание', 1200),
        (3, 'MAINTENANCE', 'Техническое обслуживание', 'Замена фильтров', 'Описание', 1100),

@@ -11,7 +11,7 @@ import java.util.List;
 
 @Entity
 @Data
-@Table(name = "service_order")
+@Table(name = "orders")
 public class Order extends BaseEntity {
 
     private Date placedAt;
@@ -20,7 +20,8 @@ public class Order extends BaseEntity {
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private Date executionDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @NotEmpty(message = "Выберите услуги")
