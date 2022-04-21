@@ -18,12 +18,6 @@ create table user_roles
     roles   varchar(255)
 );
 
-create table user_orders
-(
-    user_id  int8 not null,
-    order_id int8 not null
-);
-
 create table services
 (
     id          int8          not null,
@@ -54,13 +48,6 @@ create table orders_services
 
 alter table if exists user_roles
     add constraint user_roles_user_fk foreign key (user_id) references users;
-
-alter table if exists user_orders
-    add constraint user_orders_order_unique unique (order_id);
-alter table if exists user_orders
-    add constraint user_orders_order_fk foreign key (order_id) references orders;
-alter table if exists user_orders
-    add constraint user_orders_user_fk foreign key (user_id) references users;
 
 alter table if exists orders
     add constraint order_user_fk foreign key (user_id) references users;

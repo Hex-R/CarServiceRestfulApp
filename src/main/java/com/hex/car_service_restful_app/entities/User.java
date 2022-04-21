@@ -37,7 +37,7 @@ public class User extends BaseEntity implements UserDetails {
     @Size(min = 7, max = 12, message = "Необходимо 7 - 12 знаков без пробелов и скобок")
     private String phoneNumber;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Order> serviceOrders;
 
     private String activationCode;

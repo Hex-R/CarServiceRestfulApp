@@ -20,12 +20,17 @@ public class Order extends BaseEntity {
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private Date executionDate;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id")
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
     @NotEmpty(message = "Выберите услуги")
-    @ManyToMany(targetEntity = CarService.class)
+    @ManyToMany
+    @JoinTable(
+            name = "orders_services",
+            joinColumns = @JoinColumn(name = "order_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "services_id", referencedColumnName = "id")
+    )
     private List<CarService> services;
 
     private boolean isCompleted;
